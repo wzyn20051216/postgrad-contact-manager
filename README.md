@@ -2,7 +2,8 @@
   <img src="./docs/assets/social-preview.png" alt="Postgrad Contact Manager 社交预览图" width="100%" />
   <h1>研究生复试套磁管理系统</h1>
   <p><strong>Postgrad Contact Manager</strong></p>
-  <p>面向保研 / 考研 / 复试准备场景的导师联系、文书资料管理、院校检索与协同工作台。</p>
+  <p>面向保研 / 考研 / 复试场景的导师联系、文书资料管理、院校检索与协同工作台。</p>
+
   <p>
     <a href="https://2320194668.cn"><img src="https://img.shields.io/badge/Live%20Demo-2320194668.cn-0ea5e9" alt="Live Demo" /></a>
     <a href="https://github.com/wzyn20051216/postgrad-contact-manager/actions/workflows/ci.yml"><img src="https://github.com/wzyn20051216/postgrad-contact-manager/actions/workflows/ci.yml/badge.svg" alt="CI Status" /></a>
@@ -13,17 +14,30 @@
     <a href="https://github.com/wzyn20051216/postgrad-contact-manager/stargazers"><img src="https://img.shields.io/github/stars/wzyn20051216/postgrad-contact-manager" alt="GitHub Stars" /></a>
     <a href="https://github.com/wzyn20051216/postgrad-contact-manager/network/members"><img src="https://img.shields.io/github/forks/wzyn20051216/postgrad-contact-manager" alt="GitHub Forks" /></a>
   </p>
+
+  <p>
+    <img src="https://img.shields.io/badge/Vue%203-42b883?logo=vuedotjs&logoColor=white" alt="Vue 3" />
+    <img src="https://img.shields.io/badge/Express-000000?logo=express&logoColor=white" alt="Express" />
+    <img src="https://img.shields.io/badge/Prisma-2D3748?logo=prisma&logoColor=white" alt="Prisma" />
+    <img src="https://img.shields.io/badge/SQLite-003B57?logo=sqlite&logoColor=white" alt="SQLite" />
+    <img src="https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white" alt="Docker" />
+    <img src="https://img.shields.io/badge/pnpm-workspace-F69220?logo=pnpm&logoColor=white" alt="pnpm workspace" />
+  </p>
+
   <p>
     <a href="https://2320194668.cn">在线使用</a> ·
     <a href="./DEPLOY.md">部署文档</a> ·
     <a href="./docs/architecture.md">架构说明</a> ·
+    <a href="./docs/releases/v0.1.0.md">发布说明</a> ·
     <a href="./CONTRIBUTING.md">贡献指南</a> ·
     <a href="./SUPPORT.md">支持与反馈</a> ·
     <a href="./CODE_OF_CONDUCT.md">社区公约</a> ·
-    <a href="./SECURITY.md">安全策略</a> ·
-    <a href="./docs/releases/v0.1.0.md">首发发布说明</a>
+    <a href="./SECURITY.md">安全策略</a>
   </p>
 </div>
+
+> 在线体验：<https://2320194668.cn>  
+> 相关交流可联系 QQ：`2320194668`，请注明来自 GitHub。项目仍在持续完善中，请多指教。
 
 ## 项目概述
 
@@ -266,8 +280,7 @@ scripts/data/graduate-school-sources.snapshot.json
 - 可稳定复现的缺陷：提交 [Bug Report](https://github.com/wzyn20051216/postgrad-contact-manager/issues/new/choose)
 - 新功能或体验建议：提交 [Feature Request](https://github.com/wzyn20051216/postgrad-contact-manager/issues/new/choose)
 - 安全漏洞：先阅读 [SECURITY.md](./SECURITY.md)，不要在公开 Issue 中直接披露细节
-
-如果你更习惯即时沟通，也欢迎通过 QQ：`2320194668` 交流使用反馈、部署经验或产品建议，请注明来意。项目仍在持续完善中，请多指教。
+- 如果你更习惯即时沟通，也欢迎通过 QQ：`2320194668` 交流使用反馈、部署经验或产品建议，请注明来意。项目仍在持续完善中，请多指教。
 
 详细支持说明见：[SUPPORT.md](./SUPPORT.md)
 
@@ -276,7 +289,7 @@ scripts/data/graduate-school-sources.snapshot.json
 本仓库的公开版本已做以下处理：
 
 - 移除服务器 IP、SSH 凭据、私有部署记忆等敏感信息
-- 将公开文档中的域名、邮箱、健康检查地址替换为示例值
+- 将公开文档中的域名、邮箱、健康检查地址替换为示例值或公共入口
 - 忽略本地 `.env`、热发布本地配置、Agent 文件与临时测试文件
 - 保留完整的本地开发、Docker 部署与热发布链路
 

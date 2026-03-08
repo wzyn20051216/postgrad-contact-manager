@@ -5,7 +5,7 @@
   "packageManager": "pnpm@9.15.4",
   "description": "研究生复试套磁管理系统 - 帮助保研生和考研生管理导师联系全过程",
   "scripts": {
-    "dev": "concurrently "pnpm --filter client dev" "pnpm --filter server dev"",
+    "dev": "concurrently \"pnpm --filter client dev\" \"pnpm --filter server dev\"",
     "dev:client": "pnpm --filter client dev",
     "dev:server": "pnpm --filter server dev",
     "build": "pnpm db:generate && pnpm --filter shared build && pnpm --filter client build && pnpm --filter server build",

@@ -1,0 +1,18 @@
+{
+  email {$ACME_EMAIL}
+}
+
+{$DOMAIN} {
+  encode zstd gzip
+
+  @health path /healthz
+  handle @health {
+    respond "ok" 200
+  }
+
+  reverse_proxy app:3000
+}
+
+www.{$DOMAIN} {
+  redir https://{$DOMAIN}{uri} 308
+}

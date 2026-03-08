@@ -4,28 +4,33 @@ import { authMiddleware } from '../middlewares/auth.js'
 import { validate } from '../middlewares/validate.js'
 import { createProfessorSchema, updateProfessorSchema, updateStatusSchema } from '../validators/professor.validator.js'
 
-const router = Router()
+const router: Router = Router()
 const controller = new ProfessorController()
 
-// 所有导师路由需要认证
 router.use(authMiddleware)
 
-/** GET /api/professors - 获取导师列表 */
-router.get('/', controller.list)
+/** @description GET /api/professors - 获取导师列表 */
+router.get('/', (req, res, next) => controller.list(req, res, next))
 
-/** GET /api/professors/:id - 获取导师详情 */
-router.get('/:id', controller.detail)
+/** @description GET /api/professors/:id - 获取导师详情 */
+router.get('/:id', (req, res, next) => controller.detail(req, res, next))
 
-/** POST /api/professors - 创建导师 */
-router.post('/', validate(createProfessorSchema), controller.create)
+/** @description POST /api/professors - 创建导师 */
+router.post('/', validate(createProfessorSchema), (req, res, next) =>
+  controller.create(req, res, next)
+)
 
-/** PUT /api/professors/:id - 更新导师 */
-router.put('/:id', validate(updateProfessorSchema), controller.update)
+/** @description PUT /api/professors/:id - 更新导师 */
+router.put('/:id', validate(updateProfessorSchema), (req, res, next) =>
+  controller.update(req, res, next)
+)
 
-/** DELETE /api/professors/:id - 删除导师 */
-router.delete('/:id', controller.remove)
+/** @description DELETE /api/professors/:id - 删除导师 */
+router.delete('/:id', (req, res, next) => controller.remove(req, res, next))
 
-/** PATCH /api/professors/:id/status - 更新联系状态 */
-router.patch('/:id/status', validate(updateStatusSchema), controller.updateStatus)
+/** @description PATCH /api/professors/:id/status - 更新联系状态 */
+router.patch('/:id/status', validate(updateStatusSchema), (req, res, next) =>
+  controller.updateStatus(req, res, next)
+)
 
 export { router as professorRoutes }

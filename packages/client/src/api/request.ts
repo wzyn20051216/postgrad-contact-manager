@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { useAuthStore } from '@/stores/auth'
-import { useMessage } from 'naive-ui'
+
+const AUTH_UNAUTHORIZED_EVENT = 'auth:unauthorized'
 
 /** 创建 axios 实例 */
 export const request = axios.create({
@@ -35,10 +35,15 @@ request.interceptors.response.use(
     const message = error.response?.data?.message || '请求失败'
 
     if (status === 401) {
-      // token 过期或无效，清除登录状态
-      const authStore = useAuthStore()
-      authStore.clearAuth()
-      window.location.href = '/login'
+      localStorage.removeItem('token')
+
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event(AUTH_UNAUTHORIZED_EVENT))
+        const publicAuthPaths = ['/login', '/register', '/reset-password']
+        if (!publicAuthPaths.includes(window.location.pathname)) {
+          window.location.assign('/login')
+        }
+      }
     }
 
     console.error(`[API Error] ${status}: ${message}`)

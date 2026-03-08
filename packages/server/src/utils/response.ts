@@ -1,6 +1,6 @@
 import { Response } from 'express'
 
-/** 成功响应 */
+/** @description 成功响应 */
 export function success(res: Response, data: any = null, message: string = '操作成功') {
   return res.json({
     success: true,
@@ -9,7 +9,7 @@ export function success(res: Response, data: any = null, message: string = '操�
   })
 }
 
-/** 错误响应 */
+/** @description 错误响应 */
 export function error(res: Response, message: string = '操作失败', statusCode: number = 400) {
   return res.status(statusCode).json({
     success: false,
@@ -17,26 +17,22 @@ export function error(res: Response, message: string = '操作失败', statusCod
   })
 }
 
-/** 分页响应 */
-export function paginate(
-  res: Response,
-  data: any[],
-  total: number,
-  page: number,
-  pageSize: number,
-  message: string = '查询成功'
-) {
+/** @description 成功响应别名 */
+export const successResponse = success
+
+/** @description 错误响应别名 */
+export const errorResponse = error
+
+/** @description 分页响应 */
+export function paginate(res: Response, list: any[], total: number, page: number, pageSize: number) {
   return res.json({
     success: true,
-    message,
     data: {
-      list: data,
-      pagination: {
-        total,
-        page,
-        pageSize,
-        totalPages: Math.ceil(total / pageSize),
-      },
+      list,
+      total,
+      page,
+      pageSize,
+      totalPages: Math.ceil(total / pageSize),
     },
   })
 }

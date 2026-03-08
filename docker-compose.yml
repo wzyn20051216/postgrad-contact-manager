@@ -1,0 +1,81 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: postgrad-contact-manager
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-file:/app/data/prod.db}
+      JWT_SECRET: ${JWT_SECRET:-change-this-secret-in-production}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      PORT: ${PORT:-3000}
+      DOMAIN: ${DOMAIN:-localhost}
+      APP_BASE_URL: ${APP_BASE_URL:-}
+      SERVER_PUBLIC_URL: ${SERVER_PUBLIC_URL:-}
+      CORS_ORIGIN: ${CORS_ORIGIN:-}
+      TRUST_PROXY: ${TRUST_PROXY:-1}
+      REGISTER_CODE_EXPIRES_MINUTES: ${REGISTER_CODE_EXPIRES_MINUTES:-10}
+      REGISTER_CODE_RESEND_COOLDOWN_SECONDS: ${REGISTER_CODE_RESEND_COOLDOWN_SECONDS:-60}
+      RESET_PASSWORD_CODE_EXPIRES_MINUTES: ${RESET_PASSWORD_CODE_EXPIRES_MINUTES:-10}
+      RESET_PASSWORD_CODE_RESEND_COOLDOWN_SECONDS: ${RESET_PASSWORD_CODE_RESEND_COOLDOWN_SECONDS:-60}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-465}
+      SMTP_SECURE: ${SMTP_SECURE:-true}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+      SMTP_FROM_NAME: ${SMTP_FROM_NAME:-}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
+      GITHUB_REDIRECT_URI: ${GITHUB_REDIRECT_URI:-}
+      OAUTH_STATE_EXPIRES_IN: ${OAUTH_STATE_EXPIRES_IN:-10m}
+      RESOURCE_HEALTH_SCHEDULER_ENABLED: ${RESOURCE_HEALTH_SCHEDULER_ENABLED:-true}
+      RESOURCE_HEALTH_SCHEDULE_HOUR: ${RESOURCE_HEALTH_SCHEDULE_HOUR:-3}
+      RESOURCE_HEALTH_SCHEDULE_MINUTE: ${RESOURCE_HEALTH_SCHEDULE_MINUTE:-0}
+      RESOURCE_HEALTH_MAX_CHECK_PER_USER: ${RESOURCE_HEALTH_MAX_CHECK_PER_USER:-200}
+      RESOURCE_HEALTH_TIMEOUT_MS: ${RESOURCE_HEALTH_TIMEOUT_MS:-8000}
+      AUTO_MIGRATE: ${AUTO_MIGRATE:-true}
+      NODE_ENV: production
+    expose:
+      - "3000"
+    volumes:
+      - ./data:/app/data
+      - ./packages/client/dist:/app/packages/client/dist:ro
+      - ./packages/server/dist:/app/packages/server/dist:ro
+      - ./packages/shared/dist:/app/packages/shared/dist:ro
+      - ./scripts:/app/scripts:ro
+      - ./prisma:/app/prisma:ro
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:' + (process.env.PORT || 3000) + '/api/health').then((res)=>{if(!res.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: postgrad-contact-manager-caddy
+    restart: unless-stopped
+    depends_on:
+      - app
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+      ACME_EMAIL: ${ACME_EMAIL:-}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:2019/config/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+volumes:
+  caddy_data:
+  caddy_config:

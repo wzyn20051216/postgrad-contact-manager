@@ -8,21 +8,26 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
-    "express": "^4.21.0",
+    "bcryptjs": "^2.4.0",
     "cors": "^2.8.0",
+    "dotenv": "^16.4.0",
+    "express": "^4.21.0",
+    "express-rate-limit": "^8.2.1",
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.0",
-    "bcryptjs": "^2.4.0",
-    "zod": "^3.23.0",
-    "dotenv": "^16.4.0"
+    "nodemailer": "^6.10.1",
+    "ws": "^8.19.0",
+    "zod": "^3.23.0"
   },
   "devDependencies": {
-    "@types/express": "^5.0.0",
-    "@types/cors": "^2.8.0",
-    "@types/jsonwebtoken": "^9.0.0",
     "@types/bcryptjs": "^2.4.0",
-    "tsx": "^4.19.0",
+    "@types/cors": "^2.8.0",
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.0",
+    "@types/nodemailer": "^6.4.17",
+    "@types/ws": "^8.18.1",
     "nodemon": "^3.1.0",
+    "tsx": "^4.19.0",
     "typescript": "^5.7.0"
   }
 }

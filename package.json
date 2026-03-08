@@ -2,25 +2,47 @@
   "name": "postgrad-contact-manager",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@9.15.4",
   "description": "研究生复试套磁管理系统 - 帮助保研生和考研生管理导师联系全过程",
   "scripts": {
     "dev": "concurrently \"pnpm --filter client dev\" \"pnpm --filter server dev\"",
     "dev:client": "pnpm --filter client dev",
     "dev:server": "pnpm --filter server dev",
     "build": "pnpm --filter shared build && pnpm --filter client build && pnpm --filter server build",
+    "start": "pnpm --filter server start",
     "db:migrate": "prisma migrate dev",
+    "db:migrate:prod": "prisma migrate deploy",
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
     "lint": "eslint . --ext .ts,.vue",
-    "setup": "pnpm install && pnpm db:migrate && pnpm db:seed"
+    "ip:public": "node scripts/get-public-ip.mjs",
+    "verify:domain": "node scripts/verify-domain.mjs",
+    "import:graduate-school-sources": "node scripts/import-graduate-school-sources.mjs",
+    "export:graduate-school-sources:snapshot": "node scripts/export-graduate-school-sources-snapshot.mjs",
+    "import:graduate-school-sources:snapshot": "node scripts/import-graduate-school-sources-snapshot.mjs",
+    "setup": "pnpm install && pnpm db:migrate && pnpm db:seed",
+    "docker:build": "docker build -t postgrad-contact-manager .",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "deploy:hot:init": "python scripts/hot-deploy.py --target init",
+    "deploy:hot:client": "python scripts/hot-deploy.py --target client",
+    "deploy:hot:server": "python scripts/hot-deploy.py --target server",
+    "deploy:hot:all": "python scripts/hot-deploy.py --target all",
+    "deploy:hot:check": "python scripts/hot-deploy.py --target check"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
     "concurrently": "^9.1.0",
-    "prisma": "^6.4.0",
-    "typescript": "^5.7.0"
+    "eslint": "^8.57.1",
+    "eslint-plugin-vue": "^9.33.0",
+    "typescript": "^5.7.0",
+    "vue-eslint-parser": "^9.4.3"
   },
   "dependencies": {
-    "@prisma/client": "^6.4.0"
+    "@prisma/client": "^6.4.0",
+    "prisma": "^6.4.0"
   },
   "engines": {
     "node": ">=18.0.0",

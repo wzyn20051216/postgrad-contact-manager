@@ -10,10 +10,13 @@ build/
 .env
 .env.local
 .env.*.local
+.env.hot-deploy.local
 
 # 数据库
 *.db
 *.db-journal
+data/*.db
+data/*.db-journal
 prisma/migrations/
 
 # IDE
@@ -43,3 +46,16 @@ coverage/
 # 缓存
 .cache/
 .turbo/
+
+# 本地运维 / Agent 文件（禁止开源）
+AGENTS.md
+ai_team/
+.codex*
+.tmp-auth-sync.zip
+
+# Python 缓存
+__pycache__/
+*.pyc
+
+# 临时测试文件
+packages/client/src/views/settings/temp_test_*.txt

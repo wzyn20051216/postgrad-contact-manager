@@ -1,0 +1,77 @@
+name: Bug Report
+description: 报告一个可复现的缺陷，帮助维护者快速定位问题
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢提交问题。请尽量填写完整信息，避免只写“打不开”“有问题”之类无法定位的描述。
+  - type: textarea
+    id: summary
+    attributes:
+      label: 问题描述
+      description: 用一两句话说明你遇到的现象，以及你原本预期的行为
+      placeholder: 例如：进入资料专区后，点击某条资源会出现白屏，但预期应打开详情页
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: 请提供稳定、可重复的步骤
+      placeholder: |
+        1. 打开 ...
+        2. 点击 ...
+        3. 输入 ...
+        4. 看到 ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 预期结果
+      placeholder: 应该出现什么结果？
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 实际结果
+      placeholder: 实际发生了什么？是否有报错、白屏、卡死、错位等现象？
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: 截图 / 日志 / 报错信息
+      description: 可粘贴浏览器控制台、后端日志、接口错误或截图说明
+      render: shell
+  - type: input
+    id: env
+    attributes:
+      label: 环境信息
+      description: 请填写浏览器、操作系统、Node.js、pnpm 等版本
+      placeholder: Windows 11 / Chrome 134 / Node 20 / pnpm 9
+  - type: dropdown
+    id: scope
+    attributes:
+      label: 影响范围
+      options:
+        - 前端页面
+        - 后端接口
+        - 数据库 / Prisma
+        - 部署 / Docker / HTTPS
+        - 文档
+        - 其他
+    validations:
+      required: true
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: 提交前确认
+      options:
+        - label: 我已经搜索过现有 Issue，确认这不是重复问题
+          required: true
+        - label: 我没有在问题描述中泄露密码、Token、邮箱验证码、服务器私密信息等敏感数据
+          required: true

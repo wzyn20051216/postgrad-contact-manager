@@ -15,6 +15,12 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: false },
   },
   {
+    path: '/reset-password',
+    name: 'ResetPassword',
+    component: () => import('@/views/auth/ResetPasswordPage.vue'),
+    meta: { requiresAuth: false },
+  },
+  {
     path: '/',
     component: () => import('@/layouts/MainLayout.vue'),
     meta: { requiresAuth: true },
@@ -32,6 +38,21 @@ const routes: RouteRecordRaw[] = [
         path: 'professors',
         name: 'Professors',
         component: () => import('@/views/professor/ProfessorList.vue'),
+      },
+      {
+        path: 'professors/new',
+        name: 'ProfessorCreate',
+        component: () => import('@/views/professor/ProfessorForm.vue'),
+      },
+      {
+        path: 'professors/:id',
+        name: 'ProfessorDetail',
+        component: () => import('@/views/professor/ProfessorDetail.vue'),
+      },
+      {
+        path: 'professors/:id/edit',
+        name: 'ProfessorEdit',
+        component: () => import('@/views/professor/ProfessorForm.vue'),
       },
       {
         path: 'kanban',
@@ -56,7 +77,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'reminders',
         name: 'Reminders',
-        component: () => import('@/views/note/NotePage.vue'),
+        component: () => import('@/views/reminder/ReminderPage.vue'),
       },
       {
         path: 'notes',
@@ -64,9 +85,34 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/note/NotePage.vue'),
       },
       {
-        path: 'calendar',
-        name: 'Calendar',
-        component: () => import('@/views/dashboard/DashboardPage.vue'),
+        path: 'notes/new',
+        name: 'NoteCreate',
+        component: () => import('@/views/note/NoteEditorPage.vue'),
+      },
+      {
+        path: 'notes/:id/edit',
+        name: 'NoteEdit',
+        component: () => import('@/views/note/NoteEditorPage.vue'),
+      },
+      {
+        path: 'resources',
+        name: 'Resources',
+        component: () => import('@/views/resource/ResourcePage.vue'),
+      },
+      {
+        path: 'school-search',
+        name: 'SchoolSearch',
+        component: () => import('@/views/school-search/SchoolSearchPage.vue'),
+      },
+      {
+        path: 'school-sources',
+        name: 'SchoolSources',
+        component: () => import('@/views/school-search/SchoolSourcePage.vue'),
+      },
+      {
+        path: 'forum',
+        name: 'Forum',
+        component: () => import('@/views/forum/ForumPage.vue'),
       },
       {
         path: 'settings',
@@ -87,17 +133,20 @@ const router = createRouter({
   routes,
 })
 
-// 路由守卫
-router.beforeEach((to, _from, next) => {
+/** @description 路由守卫，先完成登录态初始化再决定跳转 */
+router.beforeEach(async (to) => {
   const authStore = useAuthStore()
+  await authStore.initAuth()
 
   if (to.meta.requiresAuth !== false && !authStore.isLoggedIn) {
-    next({ name: 'Login' })
-  } else if ((to.name === 'Login' || to.name === 'Register') && authStore.isLoggedIn) {
-    next({ name: 'Dashboard' })
-  } else {
-    next()
+    return { name: 'Login' }
   }
+
+  if ((to.name === 'Login' || to.name === 'Register' || to.name === 'ResetPassword') && authStore.isLoggedIn) {
+    return { name: 'Dashboard' }
+  }
+
+  return true
 })
 
 export default router

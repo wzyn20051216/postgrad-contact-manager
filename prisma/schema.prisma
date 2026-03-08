@@ -8,19 +8,43 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  nickname  String?
-  avatar    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String   @id @default(cuid())
+  email          String   @unique
+  password       String
+  nickname       String?
+  avatar         String?
+  emailVerified  Boolean  @default(true)
+  githubId       String?  @unique
+  githubUsername String?
+  tokenVersion   Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  professors     Professor[]
-  tags           Tag[]
-  emailTemplates EmailTemplate[]
-  reminders      Reminder[]
-  notes          Note[]
+  professors        Professor[]
+  tags              Tag[]
+  emailTemplates    EmailTemplate[]
+  reminders         Reminder[]
+  notes             Note[]
+  resourceLinks     ResourceLink[]
+  healthReports     ResourceHealthReport[]
+  forumPosts        ForumPost[]
+  forumComments     ForumComment[]
+  forumPostLikes    ForumPostLike[]
+  forumNotificationsReceived ForumNotification[] @relation("ForumNotificationRecipient")
+  forumNotificationsSent     ForumNotification[] @relation("ForumNotificationActor")
+}
+
+model EmailVerificationCode {
+  id         String   @id @default(cuid())
+  email      String
+  purpose    String
+  codeHash   String
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([email, purpose, createdAt])
 }
 
 model Professor {
@@ -147,6 +171,152 @@ model Note {
 
   user      User       @relation(fields: [userId], references: [id])
   professor Professor? @relation(fields: [professorId], references: [id], onDelete: SetNull)
+}
+
+model ResourceLink {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  url         String
+  category    String   @default("未分类")
+  isPinned    Boolean  @default(false)
+  visitCount  Int      @default(0)
+  lastVisitedAt DateTime?
+  healthStatus String   @default("UNKNOWN")
+  lastCheckedAt DateTime?
+  lastCheckStatusCode Int?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model ResourceHealthReport {
+  id               String   @id @default(cuid())
+  userId           String
+  triggerType      String   @default("SCHEDULED")
+  totalCount       Int      @default(0)
+  checkedCount     Int      @default(0)
+  availableCount   Int      @default(0)
+  unavailableCount Int      @default(0)
+  unknownCount     Int      @default(0)
+  skippedCount     Int      @default(0)
+  startedAt        DateTime @default(now())
+  finishedAt       DateTime?
+  createdAt        DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model SchoolOfficialSource {
+  id          String   @id @default(cuid())
+  schoolName  String
+  siteName    String
+  baseUrl     String   @unique
+  domain      String
+  description String?
+  priority    Int      @default(100)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([schoolName, isActive, priority])
+  @@index([domain, isActive])
+}
+
+model ForumCategory {
+  id          String      @id @default(cuid())
+  name        String      @unique
+  description String?
+  sortOrder   Int         @default(0)
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  posts ForumPost[]
+
+  @@index([sortOrder, createdAt])
+}
+
+model ForumPost {
+  id           String   @id @default(cuid())
+  categoryId   String?
+  userId       String
+  title        String
+  content      String
+  isPinned     Boolean  @default(false)
+  viewCount    Int      @default(0)
+  commentCount Int      @default(0)
+  likeCount    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  category ForumCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comments ForumComment[]
+  likes    ForumPostLike[]
+  notifications ForumNotification[]
+
+  @@index([categoryId, createdAt])
+  @@index([userId, createdAt])
+  @@index([isPinned, updatedAt])
+}
+
+model ForumComment {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  parentId  String?
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  post     ForumPost      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent   ForumComment?  @relation("ForumCommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies  ForumComment[] @relation("ForumCommentReplies")
+  notifications ForumNotification[]
+
+  @@index([postId, createdAt])
+  @@index([userId, createdAt])
+  @@index([parentId, createdAt])
+}
+
+model ForumPostLike {
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
+
+  post ForumPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([postId, userId])
+  @@index([userId, createdAt])
+}
+
+model ForumNotification {
+  id              String   @id @default(cuid())
+  recipientUserId String
+  actorUserId     String?
+  postId          String?
+  commentId       String?
+  type            String
+  content         String
+  isRead          Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  readAt          DateTime?
+
+  recipientUser User         @relation("ForumNotificationRecipient", fields: [recipientUserId], references: [id], onDelete: Cascade)
+  actorUser     User?        @relation("ForumNotificationActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+  post          ForumPost?   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  comment       ForumComment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@index([recipientUserId, isRead, createdAt])
+  @@index([recipientUserId, createdAt])
+  @@index([type, createdAt])
 }
 
 model StatusLog {
